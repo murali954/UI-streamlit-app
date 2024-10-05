@@ -84,7 +84,7 @@ st.markdown(
 def load_data():
 df = pd.read_csv('commodity.csv')
 
-    return df
+return df
 
 data = load_data()
 
