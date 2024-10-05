@@ -82,7 +82,8 @@ st.markdown(
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv('commodity.csv')
+    df = pd.read_csv('./commodity.csv')  # Assumes the file is in the current working directory
+
 
     return df
 
