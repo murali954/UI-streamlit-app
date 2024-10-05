@@ -271,6 +271,6 @@ with right_col:
             response = generate_text_with_cohere(prompt=prompt_text, cohere_client=co)
             st.write(f"**Chatbot's Answer:** {response}")
         else:
-            st.error("Please ask a question.")i want to make an app step by steppp sayy
+            st.error("Please ask a question.")
 
 
