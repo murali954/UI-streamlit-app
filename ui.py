@@ -97,7 +97,7 @@ st.sidebar.markdown("### Select a Commodity and Column for Forecasting")
 specific_commodities = data['Commodity'].unique().tolist()
 commodity = st.sidebar.selectbox("Select Commodity", specific_commodities)
 
-st.sidebar.image('/home/murali/Downloads/Untitled.jpeg', use_column_width=False, width=250)
+st.sidebar.image('Untitled.jpeg', use_column_width=False, width=250)
 
 left_col, right_col = st.columns([3, 1])
 
@@ -105,7 +105,7 @@ with left_col:
     st.title("🌾 Agricultural Commodity Forecasting & Chatbot Integration")
     st.markdown("Gain insights into future prices of various agricultural commodities and interact with an AI-powered chatbot for more detailed information.")
 
-    st.image('/home/murali/Downloads/main-image.png', use_column_width=False, width=500)
+    st.image('main-image.png', use_column_width=False, width=500)
 
     numeric_columns = data.select_dtypes(include=np.number).columns.tolist()
     if not numeric_columns:
