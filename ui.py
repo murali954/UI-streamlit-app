@@ -39,17 +39,6 @@ Answer:
 prompt_template = PromptTemplate(template=template, input_variables=["context", "question"])
 
 st.set_page_config(page_title="Agri-Commodity Forecast & Chatbot", layout="wide")
-st.markdown(
-    """
-    <link rel="manifest" href="/manifest.json">
-    <script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js');
-    }
-    </script>
-    """,
-    unsafe_allow_html=True
-)
 
 
 st.markdown(
@@ -282,5 +271,6 @@ with right_col:
             response = generate_text_with_cohere(prompt=prompt_text, cohere_client=co)
             st.write(f"**Chatbot's Answer:** {response}")
         else:
-            st.error("Please ask a question.")
+            st.error("Please ask a question.")i want to make an app step by steppp sayy
+
 
