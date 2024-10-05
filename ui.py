@@ -82,7 +82,8 @@ st.markdown(
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv('/home/murali/Downloads/commodity.csv')
+    df = pd.read_csv('commodity.csv')
+
     return df
 
 
