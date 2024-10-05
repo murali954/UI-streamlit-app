@@ -6,5 +6,6 @@ statsmodels
 scikit-learn
 seaborn
 cohere
+langchain
 langchain_core
 
