@@ -4,6 +4,7 @@ numpy
 matplotlib
 statsmodels
 scikit-learn
+pydantic
 seaborn
 cohere
 langchain
