@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 from sklearn.preprocessing import MinMaxScaler
-from pydantic import BaseModel, model_validator
 
 import seaborn as sns
 import cohere
@@ -81,14 +80,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-class MyModel(BaseModel):
-    value: int
 
-@model_validator(mode='before')
-def check_value(cls, values):
-        if values.get('value') < 0:
-            raise ValueError('Value must be non-negative')
-        return values
 @st.cache_data
 def load_data():
     df = pd.read_csv('commodity.csv')
