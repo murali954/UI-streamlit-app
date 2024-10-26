@@ -1,4 +1,3 @@
-from pydantic import BaseModel, model_validator
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -9,17 +8,6 @@ import seaborn as sns
 import cohere
 from langchain.chains import LLMChain
 from langchain_core.prompts import PromptTemplate
-
-# Define a Pydantic model for validation (example)
-class CommodityData(BaseModel):
-    # Assuming you have some fields in your data model
-    Commodity: str
-    target_column: float
-
-    @model_validator(pre=True, skip_on_failure=True)
-    def validate_commodity_data(cls, values):
-        # Perform validation logic here
-        return values
 
 # Cohere integration for chatbot functionality
 def generate_text_with_cohere(prompt, cohere_client):
@@ -51,6 +39,7 @@ Answer:
 prompt_template = PromptTemplate(template=template, input_variables=["context", "question"])
 
 st.set_page_config(page_title="Agri-Commodity Forecast & Chatbot", layout="wide")
+
 
 st.markdown(
     """
@@ -241,19 +230,46 @@ with left_col:
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(commodity_data.index, commodity_data[target_column], color='blue', label=f'{target_column} Prices')
     ax.axhline(commodity_data[target_column].mean(), color='red', linestyle='--', label='Average Price')
-    ax.set_xlabel("Index")
+    ax.set_xlabel("Time")
     ax.set_ylabel(f"{target_column}")
-    ax.set_title(f'{commodity} - Price Awareness')
+    ax.set_title(f'{commodity} - {target_column} Price Awareness')
     ax.legend()
     st.pyplot(fig)
 
-st.markdown("### Ask Questions about the Data")
-user_query = st.text_input("Ask a question about the data:")
-if st.button("Submit"):
-    context = f"Commodity: {commodity}, Column: {target_column}, Steps: {steps}, Order: {order}"
-    prompt = template.format(context=context, question=user_query)
-    answer = generate_text_with_cohere(prompt, co)
-    st.write(answer)
+    
+with right_col:
+    st.header("💬 Chat with the Assistant")
 
+    # Extract relevant details from the dataset
+    unique_states = data['State'].unique().tolist()
+    commodities = data['Commodity'].unique().tolist()
+    columns = data.columns.tolist()
 
+    # Provide a summary of the data
+    summary = data.describe().to_dict()
+
+    context = f"""
+    - Commodities in the dataset: {commodities}
+    - States in the dataset: {unique_states}
+    - Available columns: {columns}
+    - Summary of numeric data: {summary}
+
+    Current data context:
+    {data.head().to_dict()}
+
+    Forecasting details:
+    For the selected commodity and column, the ARIMA model forecasts future values. The parameters of the model and the forecasted results are displayed in the app.
+
+    Please ask about anything related to this data.
+    """
+
+    question = st.text_input("Ask the chatbot a question", placeholder="What would you like to know?")
+
+    if st.button("Get Answer"):
+        if question:
+            prompt_text = prompt_template.format(context=context, question=question)
+            response = generate_text_with_cohere(prompt=prompt_text, cohere_client=co)
+            st.write(f"**Chatbot's Answer:** {response}")
+        else:
+            st.error("Please ask a question.")
 
