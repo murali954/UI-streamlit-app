@@ -85,7 +85,7 @@ class MyModel(BaseModel):
     value: int
 
 @model_validator(mode='before')
-    def check_value(cls, values):
+def check_value(cls, values):
         if values.get('value') < 0:
             raise ValueError('Value must be non-negative')
         return values
