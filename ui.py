@@ -86,7 +86,7 @@ class MyModel(BaseModel):
     field1: int
     field2: int
 
-@root_validator(skip_on_failure=True)
+@model_validator(skip_on_failure=True)
 def check_fields(cls, values):
     field1, field2 = values.get('field1'), values.get('field2')
     if field1 < 0 or field2 < 0:
