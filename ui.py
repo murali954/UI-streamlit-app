@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from pydantic import BaseModel, root_validator
+
 from statsmodels.tsa.arima.model import ARIMA
 from sklearn.preprocessing import MinMaxScaler
 
@@ -80,7 +82,16 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+class MyModel(BaseModel):
+    field1: int
+    field2: int
 
+@root_validator(skip_on_failure=True)
+def check_fields(cls, values):
+    field1, field2 = values.get('field1'), values.get('field2')
+    if field1 < 0 or field2 < 0:
+        raise ValueError('Both fields must be non-negative.')
+    return values
 @st.cache_data
 def load_data():
     df = pd.read_csv('commodity.csv')
