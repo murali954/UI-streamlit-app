@@ -2,10 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
 from statsmodels.tsa.arima.model import ARIMA
 from sklearn.preprocessing import MinMaxScaler
-
 import seaborn as sns
 import cohere
 from langchain.chains import LLMChain
@@ -82,11 +80,13 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
 @st.cache_data
 def load_data():
-    df = pd.read_csv('commodity.csv')
+    df = pd.read_csv('commodity.csv')  # Assumes the file is in the current working directory
+
+
     return df
+
 
 data = load_data()
 
@@ -97,15 +97,80 @@ st.sidebar.markdown("### Select a Commodity and Column for Forecasting")
 specific_commodities = data['Commodity'].unique().tolist()
 commodity = st.sidebar.selectbox("Select Commodity", specific_commodities)
 
-st.sidebar.image('/home/murali/Downloads/Untitled.jpeg', use_column_width=False, width=250)
+st.sidebar.image('Untitled.jpeg', use_column_width=False, width=250)
 
+# Season selection for crop recommendations
+season_crops = {
+    "Rainy": [
+        "Paddy", 
+        "Soybean", 
+        "Groundnut", 
+        "Mango", 
+        "Turmeric", 
+        "Black Gram (Urd Beans)", 
+        "Bottle Gourd", 
+        "Cauliflower", 
+        "Cucumber (Kheera)", 
+        "Green Chilli", 
+        "Mousambi (Sweet Lime)", 
+        "Onion", 
+        "Peas Wet", 
+        "Tomato", 
+        "Dry Chillies", 
+        "Mahua Seed (Hippe Seed)", 
+        "Mahua", 
+        "Banana - Green", 
+        "Bhindi (Ladies Finger)", 
+        "Bitter Gourd", 
+        "Brinjal", 
+        "Cabbage", 
+        "Capsicum", 
+        "Chikoos (Sapota)", 
+        "Coriander (Leaves)", 
+        "Garlic", 
+        "Guar", 
+        "Little Gourd (Kundru)", 
+        "Tobacco", 
+        "Arecanut (Betelnut/Supari)"
+    ],
+    "Winter": [
+        "Wheat", 
+        "Barley", 
+        "Mustard", 
+        "Chickpeas (Bengal Gram)", 
+        "Soyabean", 
+        "Raddish", 
+        "Papaya (Raw)", 
+        "Pumpkin", 
+        "Plum", 
+        "Pomegranate", 
+        "Potato", 
+        "Kodo Millet (Varagu)"
+    ],
+    "Summer": [
+        "Cotton", 
+        "Maize", 
+        "Sorghum", 
+        "Jowar (Sorghum)", 
+        "Sesamum (Sesame, Gingelly)", 
+        "Ground Nut Seed", 
+        "Sweet Potato", 
+        "Tinda"
+    ]
+}
+
+
+selected_season = st.sidebar.selectbox("Select Season", list(season_crops.keys()))
+
+st.sidebar.markdown(f"### Recommended Crops for {selected_season} Season")
+st.sidebar.write(", ".join(season_crops[selected_season]))
 left_col, right_col = st.columns([3, 1])
 
 with left_col:
     st.title("🌾 Agricultural Commodity Forecasting & Chatbot Integration")
     st.markdown("Gain insights into future prices of various agricultural commodities and interact with an AI-powered chatbot for more detailed information.")
 
-    st.image('/home/murali/Downloads/main-image.png', use_column_width=False, width=500)
+    st.image('main-image.png', use_column_width=False, width=500)
 
     numeric_columns = data.select_dtypes(include=np.number).columns.tolist()
     if not numeric_columns:
@@ -275,4 +340,5 @@ with right_col:
             st.write(f"**Chatbot's Answer:** {response}")
         else:
             st.error("Please ask a question.")
+            
 
