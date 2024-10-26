@@ -21,6 +21,7 @@ def generate_text_with_cohere(prompt, cohere_client):
     )
     return response.generations[0].text
 
+# Set your Cohere API key here
 cohere_api_key = 'IDlfxdy11paDxht8zQKuLQZkR61dhaPRTwdNzkpF'
 co = cohere.Client(cohere_api_key)
 
@@ -39,7 +40,6 @@ Answer:
 prompt_template = PromptTemplate(template=template, input_variables=["context", "question"])
 
 st.set_page_config(page_title="Agri-Commodity Forecast & Chatbot", layout="wide")
-
 
 st.markdown(
     """
@@ -82,11 +82,9 @@ st.markdown(
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv('commodity.csv')  # Assumes the file is in the current working directory
-
-
+    # Ensure the data file is in the correct directory
+    df = pd.read_csv('commodity.csv')  
     return df
-
 
 data = load_data()
 
@@ -233,47 +231,20 @@ with left_col:
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(commodity_data.index, commodity_data[target_column], color='blue', label=f'{target_column} Prices')
     ax.axhline(commodity_data[target_column].mean(), color='red', linestyle='--', label='Average Price')
-    ax.set_xlabel("Time")
+    ax.set_xlabel("Index")
     ax.set_ylabel(f"{target_column}")
-    ax.set_title(f'{commodity} - {target_column} Price Awareness')
+    ax.set_title(f"{commodity} - {target_column} Price Awareness")
     ax.legend()
     st.pyplot(fig)
 
-    
-with right_col:
-    st.header("💬 Chat with the Assistant")
+# Chatbot Integration with LangChain
+st.sidebar.subheader("💬 Ask the Chatbot")
+user_query = st.sidebar.text_input("Enter your question")
 
-    # Extract relevant details from the dataset
-    unique_states = data['State'].unique().tolist()
-    commodities = data['Commodity'].unique().tolist()
-    columns = data.columns.tolist()
+if user_query:
+    chatbot_response = generate_text_with_cohere(user_query, co)
+    st.sidebar.markdown("### Chatbot Response")
+    st.sidebar.write(chatbot_response)
 
-    # Provide a summary of the data
-    summary = data.describe().to_dict()
-
-    context = f"""
-    - Commodities in the dataset: {commodities}
-    - States in the dataset: {unique_states}
-    - Available columns: {columns}
-    - Summary of numeric data: {summary}
-
-    Current data context:
-    {data.head().to_dict()}
-
-    Forecasting details:
-    For the selected commodity and column, the ARIMA model forecasts future values. The parameters of the model and the forecasted results are displayed in the app.
-
-    Please ask about anything related to this data.
-    """
-
-    question = st.text_input("Ask the chatbot a question", placeholder="What would you like to know?")
-
-    if st.button("Get Answer"):
-        if question:
-            prompt_text = prompt_template.format(context=context, question=question)
-            response = generate_text_with_cohere(prompt=prompt_text, cohere_client=co)
-            st.write(f"**Chatbot's Answer:** {response}")
-        else:
-            st.error("Please ask a question.")
 
 
