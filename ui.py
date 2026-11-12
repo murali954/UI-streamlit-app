@@ -21,7 +21,7 @@ def generate_text_with_cohere(prompt, cohere_client):
     )
     return response.generations[0].text
 
-cohere_api_key = 'IDlfxdy11paDxht8zQKuLQZkR61dhaPRTwdNzkpF'
+cohere_api_key = ''
 co = cohere.Client(cohere_api_key)
 
 template = """
